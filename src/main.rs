@@ -1,7 +1,11 @@
+use std::collections::HashSet;
+use std::env;
+use std::process;
+
 const USAGE: &'static str = "
 Usage:
-    blerp {[OPTION | ARGS] ... [ARGS ... -F [FLAGS] ...}
-    blerp {... DIRECTORY ... URL | BLERP} OPTIONS] - {}
+    blerp [options] [args ...]
+    blerp (--help | --version)
 
 Options:
     -a    Attack mode
@@ -35,5 +39,35 @@ Options:
 ";
 
 fn main() {
-    println!("{}", USAGE);
+    // Roll a custom parser because the blerp specs are nonsense anyways.
+    let mut args: Vec<String> = env::args().collect();
+    let _program = args.remove(0);
+
+    let mut flags: HashSet<char> = HashSet::new();
+    let mut arguments: Vec<String> = Vec::new();
+
+    for arg in args {
+        // Handle --help and --version options
+        if arg == "--help" {
+            println!("{}", USAGE);
+            process::exit(0);
+        } else if arg == "--version" {
+            println!("blerp {}", env!("CARGO_PKG_VERSION"));
+            process::exit(0);
+        }
+
+        // Grab flags
+        if arg.starts_with("-") {
+            for c in arg.chars() {
+                if c != '-' {
+                    flags.insert(c);
+                }
+            }
+        } else {
+            arguments.push(arg);
+        }
+    }
+
+    println!("Flags: {:?}", flags);
+    println!("Arguments: {:?}", arguments);
 }

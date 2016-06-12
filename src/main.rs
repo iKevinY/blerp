@@ -47,24 +47,31 @@ fn main() {
     let mut arguments: Vec<String> = Vec::new();
 
     for arg in args {
-        // Handle --help and --version options
-        if arg == "--help" {
-            println!("{}", USAGE);
-            process::exit(0);
-        } else if arg == "--version" {
-            println!("blerp {}", env!("CARGO_PKG_VERSION"));
-            process::exit(0);
-        }
+        match arg.as_ref() {
+            "--help" => {
+                println!("{}", USAGE);
+                process::exit(0);
+            },
 
-        // Collect all short flags
-        if arg.starts_with("-") {
-            for c in arg.chars() {
-                if c != '-' {
-                    flags.insert(c);
+            "--version" => {
+                println!("blerp {}", env!("CARGO_PKG_VERSION"));
+                process::exit(0);
+            },
+
+            // Treat other "long options" as arguments
+            _ if arg.starts_with("--") => arguments.push(arg),
+
+            // Collect all short flags
+            _ if arg.starts_with("-") => {
+                for c in arg.chars() {
+                    if c != '-' {
+                        flags.insert(c);
+                    }
                 }
-            }
-        } else {
-            arguments.push(arg);
+            },
+
+            // These are our remaining arguments
+            _ => arguments.push(arg),
         }
     }
 

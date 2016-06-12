@@ -45,6 +45,7 @@ fn main() {
 
     let mut flags: HashSet<char> = HashSet::new();
     let mut arguments: Vec<String> = Vec::new();
+    let mut is_arg: bool = false;
 
     for arg in args {
         match arg.as_ref() {
@@ -58,25 +59,26 @@ fn main() {
                 process::exit(0);
             },
 
-            // Treat other "long options" as arguments
-            _ if arg.starts_with("--") => arguments.push(arg),
-
-            // Collect all short flags
-            _ if arg.starts_with("-") => {
-                for c in arg.chars() {
-                    if c != '-' {
-                        flags.insert(c);
+            _ => {
+                // Collect "short options" until an argument is encountered
+                if arg.starts_with("--") || !arg.starts_with("-") || is_arg {
+                    arguments.push(arg);
+                    is_arg = true;
+                } else {
+                    for c in arg.chars() {
+                        if c != '-' {
+                            flags.insert(c);
+                        }
                     }
                 }
             },
-
-            // These are our remaining arguments
-            _ => arguments.push(arg),
         }
     }
 
+    let opposite_day: bool = flags.contains(&'O');
+
     if flags.contains(&'g') {
-        let engine = if flags.contains(&'O') {
+        let engine = if opposite_day {
             "https://duckduckgo.com/"
         } else {
             "https://www.google.com/search"
@@ -87,7 +89,7 @@ fn main() {
     }
 
     if flags.contains(&'h') {
-        if flags.contains(&'O') {
+        if opposite_day {
             println!("Input halts.");
         } else {
             // TODO: Solve Halting problem

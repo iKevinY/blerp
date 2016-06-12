@@ -75,6 +75,17 @@ fn main() {
         }
     }
 
+    if flags.contains(&'g') {
+        let engine = if flags.contains(&'O') {
+            "https://duckduckgo.com/"
+        } else {
+            "https://www.google.com/search"
+        };
+
+        let url = format!("{}?q={}", engine, arguments.join("+"));
+        process::Command::new("open").arg(url).spawn().expect("failed to open");;
+    }
+
     if flags.contains(&'h') {
         if flags.contains(&'O') {
             println!("Input halts.");

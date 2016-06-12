@@ -61,6 +61,10 @@ fn main() {
         process::Command::new("open").arg(url).spawn().expect("failed to open");
     }
 
+    if args.get_bool("-c") {
+        println!("Number of arguments: {}", args.get_vec("<args>").len());
+    }
+
     if args.get_bool("-h") {
         if opposite_day {
             println!("Input halts.");

@@ -1,10 +1,12 @@
-use std::collections::HashSet;
-use std::env;
+extern crate docopt;
+
 use std::process;
+
+use docopt::Docopt;
 
 const USAGE: &'static str = "
 Usage:
-    blerp [options] [args ...]
+    blerp [options] <args>...
     blerp (--help | --version)
 
 Options:
@@ -39,56 +41,27 @@ Options:
 ";
 
 fn main() {
-    // Roll a custom parser because the blerp specs are nonsense anyways.
-    let mut args: Vec<String> = env::args().collect();
-    let _program = args.remove(0);
+    let args = Docopt::new(USAGE).and_then(|dopt| dopt.parse()).unwrap_or_else(|e| e.exit());
 
-    let mut flags: HashSet<char> = HashSet::new();
-    let mut arguments: Vec<String> = Vec::new();
-    let mut is_arg: bool = false;
-
-    for arg in args {
-        match arg.as_ref() {
-            "--help" => {
-                println!("{}", USAGE);
-                process::exit(0);
-            },
-
-            "--version" => {
-                println!("blerp {}", env!("CARGO_PKG_VERSION"));
-                process::exit(0);
-            },
-
-            _ => {
-                // Collect "short options" until an argument is encountered
-                if arg.starts_with("--") || !arg.starts_with("-") || is_arg {
-                    arguments.push(arg);
-                    is_arg = true;
-                } else {
-                    for c in arg.chars() {
-                        if c != '-' {
-                            flags.insert(c);
-                        }
-                    }
-                }
-            },
-        }
+    if args.get_bool("--version") {
+        println!("blerp {}", env!("CARGO_PKG_VERSION"));
+        return;
     }
 
-    let opposite_day: bool = flags.contains(&'O');
+    let opposite_day: bool = args.get_bool("-O");
 
-    if flags.contains(&'g') {
+    if args.get_bool("-g") {
         let engine = if opposite_day {
             "https://duckduckgo.com/"
         } else {
             "https://www.google.com/search"
         };
 
-        let url = format!("{}?q={}", engine, arguments.join("+"));
-        process::Command::new("open").arg(url).spawn().expect("failed to open");;
+        let url = format!("{}?q={}", engine, args.get_vec("<args>").join("+"));
+        process::Command::new("open").arg(url).spawn().expect("failed to open");
     }
 
-    if flags.contains(&'h') {
+    if args.get_bool("-h") {
         if opposite_day {
             println!("Input halts.");
         } else {

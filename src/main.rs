@@ -56,7 +56,7 @@ fn main() {
             process::exit(0);
         }
 
-        // Grab flags
+        // Collect all short flags
         if arg.starts_with("-") {
             for c in arg.chars() {
                 if c != '-' {
@@ -68,6 +68,12 @@ fn main() {
         }
     }
 
-    println!("Flags: {:?}", flags);
-    println!("Arguments: {:?}", arguments);
+    if flags.contains(&'h') {
+        if flags.contains(&'O') {
+            println!("Input halts.");
+        } else {
+            // TODO: Solve Halting problem
+            loop {};
+        }
+    }
 }

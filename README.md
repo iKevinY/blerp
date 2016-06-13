@@ -5,7 +5,7 @@ This is a Rust implementation of `blerp`, the fictional program described in xkc
 
 ## Installation
 
-`blerp` is currently a work-in-progress and not all too useful. Consider yourself warned.
+`blerp` is currently a work in progress and not all that useful. Consider yourself warned.
 
 ```bash
 $ git clone https://github.com/iKevinY/blerp.git

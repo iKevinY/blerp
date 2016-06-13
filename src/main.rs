@@ -1,12 +1,14 @@
 extern crate docopt;
 
-use std::process;
+use std::process::Command;
 
 use docopt::Docopt;
 
 const USAGE: &'static str = "
+blerp filters local or remote files or resources.
+
 Usage:
-    blerp [options] <args>...
+    blerp [options] [<path>...]
     blerp (--help | --version)
 
 Options:
@@ -38,6 +40,7 @@ Options:
     -v    Verbose; alias to find / -exec cat {}
     -V    Set version number
     -y    Yikes
+
 ";
 
 fn main() {
@@ -48,8 +51,10 @@ fn main() {
         return;
     }
 
+    // Opposite day
     let opposite_day: bool = args.get_bool("-O");
 
+    // Use Google
     if args.get_bool("-g") {
         let engine = if opposite_day {
             "https://duckduckgo.com/"
@@ -57,14 +62,16 @@ fn main() {
             "https://www.google.com/search"
         };
 
-        let url = format!("{}?q={}", engine, args.get_vec("<args>").join("+"));
-        process::Command::new("open").arg(url).spawn().expect("failed to open");
+        let url = format!("{}?q={}", engine, args.get_vec("<path>").join("+"));
+        Command::new("open").arg(url).spawn().expect("failed to open");
     }
 
+    // Count number of arguments
     if args.get_bool("-c") {
-        println!("Number of arguments: {}", args.get_vec("<args>").len());
+        println!("Number of arguments: {}", args.get_vec("<path>").len());
     }
 
+    // Check whether input halts
     if args.get_bool("-h") {
         if opposite_day {
             println!("Input halts.");

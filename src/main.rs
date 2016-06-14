@@ -1,5 +1,6 @@
 extern crate docopt;
 
+use std::fs;
 use std::process::Command;
 
 use docopt::Docopt;
@@ -69,6 +70,19 @@ fn main() {
     // Count number of arguments
     if args.get_bool("-c") {
         println!("Number of arguments: {}", args.get_vec("<path>").len());
+    }
+
+    let mut files: Vec<String> = Vec::new();
+    let paths = fs::read_dir("./").unwrap();
+
+    for path in paths {
+        if path.as_ref().unwrap().metadata().unwrap().is_file() {
+            files.push(path.unwrap().file_name().into_string().unwrap());
+        }
+    }
+
+    for file in files {
+        println!("{}", file);
     }
 
     // Check whether input halts

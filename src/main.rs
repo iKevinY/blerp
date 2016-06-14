@@ -1,7 +1,11 @@
 extern crate docopt;
 
 use std::fs;
+use std::io;
+use std::io::Write;
 use std::process::Command;
+use std::thread;
+use std::time::Duration;
 
 use docopt::Docopt;
 
@@ -91,7 +95,18 @@ fn main() {
             println!("Input halts.");
         } else {
             // TODO: Solve Halting problem
-            loop {};
+            print!("Checking whether input halts");
+            let (mut delay, mut next) = (1, 1);
+
+            loop {
+                io::stdout().flush().unwrap();
+                print!(".");
+                thread::sleep(Duration::from_secs(delay));
+
+                let tmp = delay + next;
+                delay = next;
+                next = tmp;
+            };
         }
     }
 }

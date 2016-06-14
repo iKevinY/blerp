@@ -2,6 +2,10 @@
 name = "blerp"
 version = "0.1.0"
 authors = ["Kevin Yap <me@kevinyap.ca>"]
+description = "blerp filters local or remote files or resources."
+homepage = "https://github.com/iKevinY/blerp"
+repository = "https://github.com/iKevinY/blerp"
+license = "MIT"
 
 [dependencies]
 docopt = "0.6"

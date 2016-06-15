@@ -7,79 +7,39 @@ use std::process::Command;
 use std::thread;
 use std::time::Duration;
 
-use docopt::Docopt;
-
-const USAGE: &'static str = "
-blerp filters local or remote files or resources.
-
-Usage:
-    blerp [options] [<path>...]
-    blerp (--help | --version)
-
-Options:
-    -a    Attack mode
-    -b    Suppress bees
-    -—    Flags use em dashes
-    -c    Count number of arguments
-    -d    Pipes output to debug.exe
-    -D    Deprecated
-    -e    Execute something
-    -f    Fun mode
-    -g    Use Google
-    -h    Check whether input halts
-    -i    Ignore case (lower)
-    -I    Ignore case (upper)
-    -jk   Kidding
-    -n    Behavior not defined
-    -o    Overwrite
-    -O    Opposite day
-    -p    Set true Pope; accepts \"Rome\" or \"Avignon\"
-    -q    Quiet mode; output is printed to stdout instead of being spoken aloud
-    -r    Randomize arguments
-    -R    Run recursively on http://*
-    -s    Follow symbolic links symbolically
-    -S    Stealth mode
-    -t    Tumble dry
-    -u    UTF-8 mode; otherwise defaults to ANSEL
-    -U    Update (default: Facebook)
-    -v    Verbose; alias to find / -exec cat {}
-    -V    Set version number
-    -y    Yikes
-
-";
+mod blerp;
 
 fn main() {
-    let args = Docopt::new(USAGE).and_then(|dopt| dopt.parse()).unwrap_or_else(|e| e.exit());
+    let blerp = blerp::Blerp::new();
 
-    if args.get_bool("--version") {
+    if blerp.opt_present("--version") {
         println!("blerp {}", env!("CARGO_PKG_VERSION"));
         return;
     }
 
     // Opposite day
-    let opposite_day: bool = args.get_bool("-O");
+    let opposite_day: bool = blerp.opt_present("-O");
 
     // Use Google
-    if args.get_bool("-g") {
+    if blerp.opt_present("-g") {
         let engine = if opposite_day {
             "https://duckduckgo.com/"
         } else {
             "https://www.google.com/search"
         };
 
-        let url = format!("{}?q={}", engine, args.get_vec("<path>").join("+"));
+        let url = format!("{}?q={}", engine, blerp.arguments().join("+"));
         Command::new("open").arg(url).spawn().expect("failed to open");
     }
 
     // Count number of arguments
-    if args.get_bool("-c") {
-        println!("Number of arguments: {}", args.get_vec("<path>").len());
+    if blerp.opt_present("-c") {
+        println!("Number of arguments: {}", blerp.arguments().len());
     }
 
     let mut files: Vec<String> = Vec::new();
-    let paths = fs::read_dir("./").unwrap();
 
-    for path in paths {
+    for path in fs::read_dir("./").unwrap() {
         if path.as_ref().unwrap().metadata().unwrap().is_file() {
             files.push(path.unwrap().file_name().into_string().unwrap());
         }
@@ -90,7 +50,7 @@ fn main() {
     }
 
     // Check whether input halts
-    if args.get_bool("-h") {
+    if blerp.opt_present("-h") {
         if opposite_day {
             println!("Input halts.");
         } else {

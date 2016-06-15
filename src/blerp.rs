@@ -42,6 +42,7 @@ Options:
 #[derive(Debug, RustcDecodable)]
 pub struct Blerp {
     pub arg_path: Vec<String>,
+    pub flag_b: bool,
     pub flag_c: bool,
     pub flag_g: bool,
     pub flag_h: bool,
@@ -50,7 +51,7 @@ pub struct Blerp {
 
 impl Blerp {
     pub fn new() -> Self {
-        let version = Some(format!("blerp {}", env!("CARGO_PKG_VERSION")));
+        let version = Some(format!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION")));
         Docopt::new(USAGE)
                .unwrap_or_else(|e| e.exit())
                .options_first(true)

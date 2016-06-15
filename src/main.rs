@@ -38,7 +38,12 @@ fn main() {
         }
     }
 
-    for file in files {
+    for mut file in files {
+        // Suppress bees
+        if blerp.flag_b {
+            file = file.replace("B", "Ƀ").replace("b", "ƀ");
+        }
+
         println!("{}", file);
     }
 

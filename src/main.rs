@@ -12,11 +12,6 @@ mod blerp;
 fn main() {
     let blerp = blerp::Blerp::new();
 
-    if blerp.opt_present("--version") {
-        println!("blerp {}", env!("CARGO_PKG_VERSION"));
-        return;
-    }
-
     // Opposite day
     let opposite_day: bool = blerp.opt_present("-O");
 

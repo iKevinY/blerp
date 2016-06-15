@@ -46,8 +46,15 @@ pub struct Blerp {
 
 impl Blerp {
     pub fn new() -> Self {
+        let version = Some(format!("blerp {}", env!("CARGO_PKG_VERSION")));
+
+        let docopt = Docopt::new(USAGE)
+                            .unwrap_or_else(|e| e.exit())
+                            .options_first(true)
+                            .version(version);
+
         Blerp {
-            argvmap: Docopt::new(USAGE).and_then(|d| d.parse()).unwrap_or_else(|e| e.exit()),
+            argvmap: docopt.parse().unwrap_or_else(|e| e.exit()),
         }
     }
 

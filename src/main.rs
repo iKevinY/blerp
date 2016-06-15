@@ -1,4 +1,5 @@
 extern crate docopt;
+extern crate rustc_serialize;
 
 use std::fs;
 use std::io;
@@ -12,24 +13,21 @@ mod blerp;
 fn main() {
     let blerp = blerp::Blerp::new();
 
-    // Opposite day
-    let opposite_day: bool = blerp.opt_present("-O");
-
     // Use Google
-    if blerp.opt_present("-g") {
-        let engine = if opposite_day {
+    if blerp.flag_g {
+        let engine = if blerp.flag_O {
             "https://duckduckgo.com/"
         } else {
             "https://www.google.com/search"
         };
 
-        let url = format!("{}?q={}", engine, blerp.arguments().join("+"));
+        let url = format!("{}?q={}", engine, blerp.arg_path.join("+"));
         Command::new("open").arg(url).spawn().expect("failed to open");
     }
 
     // Count number of arguments
-    if blerp.opt_present("-c") {
-        println!("Number of arguments: {}", blerp.arguments().len());
+    if blerp.flag_c {
+        println!("Number of arguments: {}", blerp.arg_path.len());
     }
 
     let mut files: Vec<String> = Vec::new();
@@ -45,8 +43,8 @@ fn main() {
     }
 
     // Check whether input halts
-    if blerp.opt_present("-h") {
-        if opposite_day {
+    if blerp.flag_h {
+        if blerp.flag_O {
             println!("Input halts.");
         } else {
             // TODO: Solve Halting problem

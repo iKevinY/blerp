@@ -9,3 +9,4 @@ license = "MIT"
 
 [dependencies]
 docopt = "0.6"
+rustc-serialize = "0.3"

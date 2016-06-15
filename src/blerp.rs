@@ -1,6 +1,4 @@
-extern crate docopt;
-
-use docopt::{ArgvMap, Docopt};
+use docopt::Docopt;
 
 const USAGE: &'static str = "
 blerp filters local or remote files or resources.
@@ -40,29 +38,24 @@ Options:
     -y    Yikes
 ";
 
+#[allow(non_snake_case)]
+#[derive(Debug, RustcDecodable)]
 pub struct Blerp {
-    argvmap: ArgvMap,
+    pub arg_path: Vec<String>,
+    pub flag_c: bool,
+    pub flag_g: bool,
+    pub flag_h: bool,
+    pub flag_O: bool,
 }
 
 impl Blerp {
     pub fn new() -> Self {
         let version = Some(format!("blerp {}", env!("CARGO_PKG_VERSION")));
-
-        let docopt = Docopt::new(USAGE)
-                            .unwrap_or_else(|e| e.exit())
-                            .options_first(true)
-                            .version(version);
-
-        Blerp {
-            argvmap: docopt.parse().unwrap_or_else(|e| e.exit()),
-        }
-    }
-
-    pub fn opt_present(&self, f: &str) -> bool {
-        self.argvmap.get_bool(f)
-    }
-
-    pub fn arguments(&self) -> Vec<&str> {
-        self.argvmap.get_vec("<path>")
+        Docopt::new(USAGE)
+               .unwrap_or_else(|e| e.exit())
+               .options_first(true)
+               .version(version)
+               .decode()
+               .unwrap_or_else(|e| e.exit())
     }
 }

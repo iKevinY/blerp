@@ -47,6 +47,7 @@ pub struct Blerp {
     pub flag_g: bool,
     pub flag_h: bool,
     pub flag_O: bool,
+    pub flag_S: bool,
 }
 
 impl Blerp {

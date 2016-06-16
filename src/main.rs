@@ -1,3 +1,4 @@
+extern crate ansi_term;
 extern crate docopt;
 extern crate rustc_serialize;
 
@@ -7,6 +8,8 @@ use std::io::Write;
 use std::process::Command;
 use std::thread;
 use std::time::Duration;
+
+use ansi_term::Style;
 
 mod blerp;
 
@@ -38,13 +41,24 @@ fn main() {
         }
     }
 
+    // Stealth mode
+    let mut style = Style::new();
+
+    if blerp.flag_S {
+        if blerp.flag_O {
+            style = style.bold();
+        } else {
+            style = style.dimmed();
+        }
+    }
+
     for mut file in files {
         // Suppress bees
         if blerp.flag_b {
             file = file.replace("B", "Ƀ").replace("b", "ƀ");
         }
 
-        println!("{}", file);
+        println!("{}", style.paint(file));
     }
 
     // Check whether input halts

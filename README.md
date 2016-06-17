@@ -29,7 +29,7 @@ $ make uninstall
 `blerp` is licensed under the `GPL(2)(3+) CC-BY/5.0 RV 41.0 like Gecko/BSD 4(2)` or [MIT License].
 
 
-[Travis Badge]: https://travis-ci.org/iKevinY/blerp.svg?branch=master
+[Travis Badge]: https://api.travis-ci.org/iKevinY/blerp.svg?branch=master
 [Build Status]: https://travis-ci.org/iKevinY/blerp
 [xkcd #1692]: http://xkcd.com/1692/
 [MIT License]: /LICENSE

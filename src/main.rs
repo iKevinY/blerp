@@ -52,13 +52,33 @@ fn main() {
         }
     }
 
+    // Determine if `say` or `espeak` are available
+    let say_cmd: Option<&str>;
+
+    if Command::new("say").spawn().is_ok() {
+        say_cmd = Some("say");
+    } else if Command::new("espeak").spawn().is_ok() {
+        say_cmd = Some("espeak");
+    } else {
+        say_cmd = None;
+
+        if blerp.flag_q && blerp.flag_O {
+            println!("`say` and `espeak` are unavailable. Defaulting to quiet mode.")
+        }
+    }
+
     for mut file in files {
         // Suppress bees
         if blerp.flag_b {
             file = file.replace("B", "Ƀ").replace("b", "ƀ");
         }
 
-        println!("{}", style.paint(file));
+        // Quiet mode, opposite day
+        if blerp.flag_q && blerp.flag_O && say_cmd.is_some() {
+            Command::new(String::from(say_cmd.unwrap())).arg(file).output().unwrap();
+        } else {
+            println!("{}", style.paint(file));
+        }
     }
 
     // Check whether input halts

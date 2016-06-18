@@ -44,6 +44,7 @@ pub struct Blerp {
     arg_path: Vec<String>,
     flag_b: bool,
     flag_c: bool,
+    flag_D: bool,
     flag_g: bool,
     flag_h: bool,
     flag_O: bool,
@@ -67,6 +68,7 @@ impl Blerp {
 
     pub fn suppress_bees(&self)     -> bool { self.flag_b }
     pub fn count_args(&self)        -> bool { self.flag_c }
+    pub fn deprecated(&self)        -> bool { self.flag_D }
     pub fn use_google(&self)        -> bool { self.flag_g }
     pub fn check_if_halts(&self)    -> bool { self.flag_h }
     pub fn opposite_day(&self)      -> bool { self.flag_O }

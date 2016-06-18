@@ -10,6 +10,7 @@ use std::thread;
 use std::time::Duration;
 
 use ansi_term::Style;
+use ansi_term::Colour::Red;
 
 mod blerp;
 
@@ -31,6 +32,11 @@ fn main() {
     // Count number of arguments
     if blerp.count_args() {
         println!("Number of arguments: {}", blerp.arguments().len());
+    }
+
+    // Deprecated feature
+    if blerp.deprecated() {
+        println!("{}", Red.paint("Use of the `-D` option is deprecated."));
     }
 
     let mut files: Vec<String> = Vec::new();

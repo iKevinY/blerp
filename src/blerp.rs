@@ -1,4 +1,4 @@
-use docopt::Docopt;
+use docopt::{ArgvMap, Docopt};
 
 const USAGE: &'static str = "
 blerp filters local or remote files or resources.
@@ -38,40 +38,41 @@ Options:
     -y    Yikes
 ";
 
-#[allow(non_snake_case)]
-#[derive(Debug, RustcDecodable)]
+#[derive(Debug)]
 pub struct Blerp {
-    arg_path: Vec<String>,
-    flag_b: bool,
-    flag_c: bool,
-    flag_D: bool,
-    flag_g: bool,
-    flag_h: bool,
-    flag_O: bool,
-    flag_q: bool,
-    flag_S: bool,
+    pub arguments: Vec<String>,
+    pub suppress_bees: bool,
+    pub count_args: bool,
+    pub deprecated: bool,
+    pub fun_mode: bool,
+    pub use_google: bool,
+    pub check_if_halts: bool,
+    pub opposite_day: bool,
+    pub quiet_mode: bool,
+    pub stealth_mode: bool,
 }
 
 impl Blerp {
     pub fn new() -> Self {
         let version = Some(format!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION")));
-        Docopt::new(USAGE)
-               .unwrap_or_else(|e| e.exit())
-               .options_first(true)
-               .version(version)
-               .decode()
-               .unwrap_or_else(|e| e.exit())
+        let argvmap: ArgvMap = Docopt::new(USAGE)
+                                      .unwrap_or_else(|e| e.exit())
+                                      .options_first(true)
+                                      .version(version)
+                                      .parse()
+                                      .unwrap_or_else(|e| e.exit());
+
+        Blerp {
+            arguments:      argvmap.get_vec("<path>").iter().map(|a| a.to_string()).collect::<Vec<String>>(),
+            suppress_bees:  argvmap.get_bool("-b"),
+            count_args:     argvmap.get_bool("-c"),
+            deprecated:     argvmap.get_bool("-D"),
+            fun_mode:       argvmap.get_bool("-f"),
+            use_google:     argvmap.get_bool("-g"),
+            check_if_halts: argvmap.get_bool("-h"),
+            opposite_day:   argvmap.get_bool("-O"),
+            quiet_mode:     argvmap.get_bool("-q"),
+            stealth_mode:   argvmap.get_bool("-S"),
+        }
     }
-
-    // Getter methods for struct fields
-    pub fn arguments(&self) -> &Vec<String> { &self.arg_path }
-
-    pub fn suppress_bees(&self)     -> bool { self.flag_b }
-    pub fn count_args(&self)        -> bool { self.flag_c }
-    pub fn deprecated(&self)        -> bool { self.flag_D }
-    pub fn use_google(&self)        -> bool { self.flag_g }
-    pub fn check_if_halts(&self)    -> bool { self.flag_h }
-    pub fn opposite_day(&self)      -> bool { self.flag_O }
-    pub fn quiet_mode(&self)        -> bool { self.flag_q }
-    pub fn stealth_mode(&self)      -> bool { self.flag_S }
 }

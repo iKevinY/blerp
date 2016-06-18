@@ -17,20 +17,20 @@ fn main() {
     let blerp = blerp::Blerp::new();
 
     // Use Google
-    if blerp.flag_g {
-        let engine = if blerp.flag_O {
+    if blerp.use_google() {
+        let engine = if blerp.opposite_day() {
             "https://duckduckgo.com/"
         } else {
             "https://www.google.com/search"
         };
 
-        let url = format!("{}?q={}", engine, blerp.arg_path.join("+"));
+        let url = format!("{}?q={}", engine, blerp.arguments().join("+"));
         Command::new("open").arg(url).spawn().expect("failed to open");
     }
 
     // Count number of arguments
-    if blerp.flag_c {
-        println!("Number of arguments: {}", blerp.arg_path.len());
+    if blerp.count_args() {
+        println!("Number of arguments: {}", blerp.arguments().len());
     }
 
     let mut files: Vec<String> = Vec::new();
@@ -44,8 +44,8 @@ fn main() {
     // Stealth mode
     let mut style = Style::new();
 
-    if blerp.flag_S {
-        if blerp.flag_O {
+    if blerp.stealth_mode() {
+        if blerp.opposite_day() {
             style = style.bold();
         } else {
             style = style.dimmed();
@@ -62,19 +62,19 @@ fn main() {
     } else {
         say_cmd = None;
 
-        if blerp.flag_q && blerp.flag_O {
+        if blerp.quiet_mode() && blerp.opposite_day() {
             println!("`say` and `espeak` are unavailable. Defaulting to quiet mode.")
         }
     }
 
     for mut file in files {
         // Suppress bees
-        if blerp.flag_b {
+        if blerp.suppress_bees() {
             file = file.replace("B", "Ƀ").replace("b", "ƀ");
         }
 
         // Quiet mode, opposite day
-        if blerp.flag_q && blerp.flag_O && say_cmd.is_some() {
+        if blerp.quiet_mode() && blerp.opposite_day() && say_cmd.is_some() {
             Command::new(String::from(say_cmd.unwrap())).arg(file).output().unwrap();
         } else {
             println!("{}", style.paint(file));
@@ -82,8 +82,8 @@ fn main() {
     }
 
     // Check whether input halts
-    if blerp.flag_h {
-        if blerp.flag_O {
+    if blerp.check_if_halts() {
+        if blerp.opposite_day() {
             println!("Input halts.");
         } else {
             // TODO: Solve Halting problem

@@ -41,14 +41,14 @@ Options:
 #[allow(non_snake_case)]
 #[derive(Debug, RustcDecodable)]
 pub struct Blerp {
-    pub arg_path: Vec<String>,
-    pub flag_b: bool,
-    pub flag_c: bool,
-    pub flag_g: bool,
-    pub flag_h: bool,
-    pub flag_O: bool,
-    pub flag_q: bool,
-    pub flag_S: bool,
+    arg_path: Vec<String>,
+    flag_b: bool,
+    flag_c: bool,
+    flag_g: bool,
+    flag_h: bool,
+    flag_O: bool,
+    flag_q: bool,
+    flag_S: bool,
 }
 
 impl Blerp {
@@ -61,4 +61,15 @@ impl Blerp {
                .decode()
                .unwrap_or_else(|e| e.exit())
     }
+
+    // Getter methods for struct fields
+    pub fn arguments(&self) -> &Vec<String> { &self.arg_path }
+
+    pub fn suppress_bees(&self)     -> bool { self.flag_b }
+    pub fn count_args(&self)        -> bool { self.flag_c }
+    pub fn use_google(&self)        -> bool { self.flag_g }
+    pub fn check_if_halts(&self)    -> bool { self.flag_h }
+    pub fn opposite_day(&self)      -> bool { self.flag_O }
+    pub fn quiet_mode(&self)        -> bool { self.flag_q }
+    pub fn stealth_mode(&self)      -> bool { self.flag_S }
 }

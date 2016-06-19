@@ -63,7 +63,7 @@ pub struct Blerp {
 }
 
 impl Blerp {
-    pub fn new<S>(argv: Vec<S>) -> Result<Self, String> where S: AsRef<str> {
+    pub fn new<S>(argv: Vec<S>) -> Self where S: AsRef<str> {
         let version = Some(format!("blerp {}", env!("CARGO_PKG_VERSION")));
         let argvmap = Docopt::new(USAGE)
                              .unwrap_or_else(|e| e.exit())
@@ -73,7 +73,7 @@ impl Blerp {
                              .parse()
                              .unwrap_or_else(|e| e.exit());
 
-        let blerp = Blerp {
+        Blerp {
             arguments:      argvmap.get_vec("<path>").iter().map(|a| a.to_string()).collect::<Vec<String>>(),
             suppress_bees:  argvmap.get_bool("-b"),
             count_args:     argvmap.get_bool("-c"),
@@ -84,12 +84,10 @@ impl Blerp {
             opposite_day:   argvmap.get_bool("-O"),
             quiet_mode:     argvmap.get_bool("-q"),
             stealth_mode:   argvmap.get_bool("-S"),
-        };
-
-        Ok(blerp)
+        }
     }
 
-    pub fn run(&self) {
+    pub fn run(&self) -> Result<(), &str> {
         // Use Google
         if self.use_google {
             let engine = if self.opposite_day {
@@ -99,7 +97,9 @@ impl Blerp {
             };
 
             let url = format!("{}?q={}", engine, self.arguments.join("+"));
-            Command::new("open").arg(url).spawn().expect("failed to open");
+            if Command::new("open").arg(url).output().is_err() {
+                return Err("Failed to open URL in browser.");
+            }
         }
 
         // Count number of arguments
@@ -185,5 +185,7 @@ impl Blerp {
                 }
             }
         }
+
+        return Ok(());
     }
 }

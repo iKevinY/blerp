@@ -64,7 +64,7 @@ pub struct Blerp {
 
 impl Blerp {
     pub fn new<S>(argv: Vec<S>) -> Result<Self, String> where S: AsRef<str> {
-        let version = Some(format!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION")));
+        let version = Some(format!("blerp {}", env!("CARGO_PKG_VERSION")));
         let argvmap = Docopt::new(USAGE)
                              .unwrap_or_else(|e| e.exit())
                              .argv(argv)
@@ -147,7 +147,7 @@ impl Blerp {
             say_cmd = None;
 
             if self.quiet_mode && self.opposite_day {
-                println!("`say` and `espeak` are unavailable. Defaulting to quiet mode.")
+                println!("`say` and `espeak` are unavailable. Defaulting to quiet mode.");
             }
         }
 

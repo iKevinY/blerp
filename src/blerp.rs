@@ -1,3 +1,7 @@
+extern crate ansi_term;
+extern crate docopt;
+extern crate rustc_serialize;
+
 use std::fs;
 use std::io;
 use std::thread;
@@ -9,6 +13,7 @@ use std::time::Duration;
 use ansi_term::Style;
 use ansi_term::Colour::Red;
 use docopt::Docopt;
+
 
 const USAGE: &'static str = "
 blerp filters local or remote files or resources.

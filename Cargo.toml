@@ -8,6 +8,14 @@ repository = "https://github.com/iKevinY/blerp"
 readme = "README.md"
 license = "MIT"
 
+[[bin]]
+name = "blerp"
+path = "src/main.rs"
+test = false
+
+[lib]
+path = "src/blerp.rs"
+
 [dependencies]
 ansi_term = "0.7"
 docopt = "0.6"

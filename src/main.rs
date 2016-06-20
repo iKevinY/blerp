@@ -7,11 +7,18 @@ use std::process;
 fn main() {
     let argv: Vec<String> = env::args().collect();
 
-    match Blerp::new(argv).run() {
-        Ok(_) => process::exit(0),
-        Err(msg) => {
-            println!("{}", msg);
-            process::exit(1);
+    match Blerp::new(argv) {
+        Ok(blerp) => {
+            if let Err(msg) = blerp.run() {
+                println!("{}", msg);
+                process::exit(1);
+            }
+        }
+        Err(err) => {
+            println!("{}", err);
+            if err.fatal() {
+                process::exit(1);
+            }
         }
     }
 }

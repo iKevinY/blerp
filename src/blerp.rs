@@ -12,7 +12,7 @@ use std::time::Duration;
 
 use ansi_term::Style;
 use ansi_term::Colour::Red;
-use docopt::Docopt;
+use docopt::{Docopt, Error};
 
 
 const USAGE: &'static str = "
@@ -68,17 +68,20 @@ pub struct Blerp {
 }
 
 impl Blerp {
-    pub fn new<S>(argv: Vec<S>) -> Self where S: AsRef<str> {
+    pub fn new<S>(argv: Vec<S>) -> Result<Self, Error> where S: AsRef<str> {
         let version = Some(format!("blerp {}", env!("CARGO_PKG_VERSION")));
-        let argvmap = Docopt::new(USAGE)
-                             .unwrap_or_else(|e| e.exit())
-                             .argv(argv)
-                             .options_first(true)
-                             .version(version)
-                             .parse()
-                             .unwrap_or_else(|e| e.exit());
 
-        Blerp {
+        let argvmap = match Docopt::new(USAGE) {
+            Ok(dopt) => {
+                match dopt.argv(argv).options_first(true).version(version).parse() {
+                    Ok(argvmap) => argvmap,
+                    Err(err) => return Err(err)
+                }
+            }
+            Err(err) => return Err(err)
+        };
+
+        let blerp = Blerp {
             arguments:      argvmap.get_vec("<path>").iter().map(|a| a.to_string()).collect::<Vec<String>>(),
             suppress_bees:  argvmap.get_bool("-b"),
             count_args:     argvmap.get_bool("-c"),
@@ -89,7 +92,9 @@ impl Blerp {
             opposite_day:   argvmap.get_bool("-O"),
             quiet_mode:     argvmap.get_bool("-q"),
             stealth_mode:   argvmap.get_bool("-S"),
-        }
+        };
+
+        return Ok(blerp);
     }
 
     pub fn run(&self) -> Result<(), &str> {

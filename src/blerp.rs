@@ -71,15 +71,8 @@ impl Blerp {
     pub fn new<S>(argv: Vec<S>) -> Result<Self, Error> where S: AsRef<str> {
         let version = Some(format!("blerp {}", env!("CARGO_PKG_VERSION")));
 
-        let argvmap = match Docopt::new(USAGE) {
-            Ok(dopt) => {
-                match dopt.argv(argv).options_first(true).version(version).parse() {
-                    Ok(argvmap) => argvmap,
-                    Err(err) => return Err(err)
-                }
-            }
-            Err(err) => return Err(err)
-        };
+        let docopt = try!(Docopt::new(USAGE));
+        let argvmap = try!(docopt.argv(argv).options_first(true).version(version).parse());
 
         let blerp = Blerp {
             arguments:      argvmap.get_vec("<path>").iter().map(|a| a.to_string()).collect::<Vec<String>>(),

@@ -1,5 +1,6 @@
 extern crate ansi_term;
 extern crate docopt;
+extern crate regex;
 extern crate rustc_serialize;
 
 use std::fs;
@@ -13,6 +14,7 @@ use std::time::Duration;
 use ansi_term::Style;
 use ansi_term::Colour::Red;
 use docopt::{Docopt, Error};
+use regex::Regex;
 
 
 const USAGE: &'static str = "
@@ -122,10 +124,17 @@ impl Blerp {
 
         let mut files: Vec<String> = Vec::new();
 
+        // Get all files in the current directory
         for path in fs::read_dir("./").unwrap() {
             if path.as_ref().unwrap().metadata().unwrap().is_file() {
                 files.push(path.unwrap().file_name().into_string().unwrap());
             }
+        }
+
+        // Filter files using arguments as regexes
+        for arg in self.arguments.clone() {
+            let re = Regex::new(&arg).unwrap();
+            files.retain(|f| re.is_match(f));
         }
 
         // Stealth mode
@@ -162,7 +171,7 @@ impl Blerp {
 
             // Quiet mode, opposite day
             if self.quiet_mode && self.opposite_day && say_cmd.is_some() {
-                Command::new(String::from(say_cmd.unwrap())).arg(file).output().unwrap();
+                Command::new(say_cmd.unwrap()).arg(file).output().unwrap();
             } else {
                 println!("{}", style.paint(file));
             }
@@ -175,12 +184,14 @@ impl Blerp {
             } else {
                 // TODO: Solve Halting problem
                 print!("Checking whether input halts");
-                let (mut delay, mut next) = (1, 1);
+
+                let mut delay = Duration::from_secs(1);
+                let mut next = delay;
 
                 loop {
-                    io::stdout().flush().unwrap();
+                    io::stdout().flush().expect("Couldn't flush stdout");
                     print!(".");
-                    thread::sleep(Duration::from_secs(delay));
+                    thread::sleep(delay);
 
                     let tmp = delay + next;
                     delay = next;

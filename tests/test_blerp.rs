@@ -1,26 +1,34 @@
 extern crate blerp;
 use blerp::Blerp;
 
+macro_rules! blerp [
+    ($($e:expr), *) => ({
+        let mut argv = Vec::new();
+        $(argv.push($e);)*
+        Blerp::new(argv)
+    })
+];
+
 #[test]
-fn test_blerp() {
-    let blerp = Blerp::new(vec!["blerp"]);
+fn blerp_no_args() {
+    let blerp = blerp!["blerp"];
     assert!(blerp.unwrap().run().is_ok());
 }
 
 #[test]
-fn test_help_option() {
-    let blerp = Blerp::new(vec!["blerp", "--help"]);
+fn blerp_help_option() {
+    let blerp = blerp!["blerp", "--help"];
     assert_eq!(blerp.unwrap_err().fatal(), false);
 }
 
 #[test]
-fn test_version_option() {
-    let blerp = Blerp::new(vec!["blerp", "--version"]);
+fn blerp_version_option() {
+    let blerp = blerp!["blerp", "--version"];
     assert_eq!(blerp.unwrap_err().fatal(), false);
 }
 
 #[test]
-fn test_invalid_option() {
-    let blerp = Blerp::new(vec!["blerp", "-k"]);
+fn blerp_invalid_option() {
+    let blerp = blerp!["blerp", "-k"];
     assert_eq!(blerp.unwrap_err().fatal(), true);
 }

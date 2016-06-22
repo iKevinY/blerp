@@ -3,6 +3,7 @@ name = "blerp"
 version = "0.1.0"
 authors = ["Kevin Yap <me@kevinyap.ca>"]
 description = "Filters local or remote files or resources. Based on xkcd #1692."
+keywords = ["blerp", "xkcd"]
 homepage = "https://github.com/iKevinY/blerp"
 repository = "https://github.com/iKevinY/blerp"
 readme = "README.md"

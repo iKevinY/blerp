@@ -4,6 +4,7 @@ use blerp::Blerp;
 macro_rules! blerp [
     ($($e:expr), *) => ({
         let mut argv = Vec::new();
+        argv.push("blerp");
         $(argv.push($e);)*
         Blerp::new(argv)
     })
@@ -11,24 +12,24 @@ macro_rules! blerp [
 
 #[test]
 fn blerp_no_args() {
-    let blerp = blerp!["blerp"];
+    let blerp = blerp![];
     assert!(blerp.unwrap().run().is_ok());
 }
 
 #[test]
 fn blerp_help_option() {
-    let blerp = blerp!["blerp", "--help"];
+    let blerp = blerp!["--help"];
     assert_eq!(blerp.unwrap_err().fatal(), false);
 }
 
 #[test]
 fn blerp_version_option() {
-    let blerp = blerp!["blerp", "--version"];
+    let blerp = blerp!["--version"];
     assert_eq!(blerp.unwrap_err().fatal(), false);
 }
 
 #[test]
 fn blerp_invalid_option() {
-    let blerp = blerp!["blerp", "-k"];
+    let blerp = blerp!["-k"];
     assert_eq!(blerp.unwrap_err().fatal(), true);
 }

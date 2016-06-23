@@ -70,14 +70,14 @@ pub struct Blerp {
 }
 
 impl Blerp {
-    pub fn new<S>(argv: Vec<S>) -> Result<Self, Error> where S: AsRef<str> {
+    pub fn new<S: AsRef<str>>(argv: Vec<S>) -> Result<Self, Error> {
         let version = Some(format!("blerp {}", env!("CARGO_PKG_VERSION")));
 
         let docopt = try!(Docopt::new(USAGE));
         let argvmap = try!(docopt.argv(argv).options_first(true).version(version).parse());
 
         let blerp = Blerp {
-            arguments:      argvmap.get_vec("<path>").iter().map(|a| a.to_string()).collect::<Vec<String>>(),
+            arguments:      argvmap.get_vec("<path>").iter().map(|a| a.to_string()).collect(),
             suppress_bees:  argvmap.get_bool("-b"),
             count_args:     argvmap.get_bool("-c"),
             deprecated:     argvmap.get_bool("-D"),
@@ -102,8 +102,9 @@ impl Blerp {
             };
 
             let url = format!("{}?q={}", engine, self.arguments.join("+"));
-            if Command::new("open").arg(url).output().is_err() {
-                return Err("Failed to open URL in browser.");
+            match Command::new("open").arg(url).output() {
+                Ok(_) => return Ok(()),
+                Err(_) => return Err("Failed to open URL in browser."),
             }
         }
 

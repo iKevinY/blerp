@@ -74,7 +74,7 @@ impl Blerp {
         let version = Some(format!("blerp {}", env!("CARGO_PKG_VERSION")));
 
         let docopt = try!(Docopt::new(USAGE));
-        let argvmap = try!(docopt.argv(argv).options_first(true).version(version).parse());
+        let argvmap = try!(docopt.argv(argv).version(version).parse());
 
         let blerp = Blerp {
             arguments:      argvmap.get_vec("<path>").iter().map(|a| a.to_string()).collect(),

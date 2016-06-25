@@ -55,6 +55,11 @@ Options:
     -y    Yikes
 ";
 
+macro_rules! cmd {
+    ($cmd:expr) => (Command::new($cmd));
+    ($cmd:expr $(, $arg:expr)*) => (Command::new($cmd).args(&[$($arg),*]));
+}
+
 #[derive(Debug)]
 pub struct Blerp {
     arguments: Vec<String>,
@@ -102,7 +107,7 @@ impl Blerp {
             };
 
             let url = format!("{}?q={}", engine, self.arguments.join("+"));
-            match Command::new("open").arg(url).output() {
+            match cmd!["open", &url].output() {
                 Ok(_) => return Ok(()),
                 Err(_) => return Err("Failed to open URL in browser."),
             }
@@ -152,9 +157,9 @@ impl Blerp {
         // Determine if `say` or `espeak` are available
         let say_cmd: Option<&str>;
 
-        if Command::new("say").spawn().is_ok() {
+        if cmd!["say"].spawn().is_ok() {
             say_cmd = Some("say");
-        } else if Command::new("espeak").spawn().is_ok() {
+        } else if cmd!["espeak"].spawn().is_ok() {
             say_cmd = Some("espeak");
         } else {
             say_cmd = None;
@@ -172,7 +177,7 @@ impl Blerp {
 
             // Quiet mode, opposite day
             if self.quiet_mode && self.opposite_day && say_cmd.is_some() {
-                Command::new(say_cmd.unwrap()).arg(file).output().unwrap();
+                cmd![say_cmd.unwrap(), file].output().unwrap();
             } else {
                 println!("{}", style.paint(file));
             }

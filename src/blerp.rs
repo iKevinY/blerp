@@ -11,9 +11,15 @@ use std::process::Command;
 use std::time::Duration;
 
 use ansi_term::Style;
-use ansi_term::Colour::Red;
+use ansi_term::Colour::{Red, Yellow};
 use docopt::{Docopt, Error};
 use regex::Regex;
+
+
+macro_rules! cmd {
+    ($cmd:expr) => (Command::new($cmd));
+    ($cmd:expr $(, $arg:expr)*) => (Command::new($cmd).args(&[$($arg),*]));
+}
 
 
 const USAGE: &'static str = "
@@ -54,10 +60,7 @@ Options:
     -y    Yikes
 ";
 
-macro_rules! cmd {
-    ($cmd:expr) => (Command::new($cmd));
-    ($cmd:expr $(, $arg:expr)*) => (Command::new($cmd).args(&[$($arg),*]));
-}
+const UNIMPLEMENTED_OPTS: &'static str = "adeiInoprRstuUvVy—";
 
 #[derive(Debug)]
 pub struct Blerp {
@@ -92,6 +95,17 @@ impl Blerp {
             quiet_mode:     argvmap.get_bool("-q"),
             stealth_mode:   argvmap.get_bool("-S"),
         };
+
+        let unimplemented: Vec<String> = UNIMPLEMENTED_OPTS
+            .chars()
+            .map(|c| format!("-{}", c))
+            .filter(|s| argvmap.get_bool(s))
+            .collect();
+
+        if unimplemented.len() > 0 {
+            print!("{}", Yellow.paint("The following options are unimplemented: "));
+            println!("{}", Yellow.paint(unimplemented.join(", ")))
+        }
 
         return Ok(blerp);
     }

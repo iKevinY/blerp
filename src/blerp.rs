@@ -1,7 +1,6 @@
 extern crate ansi_term;
 extern crate docopt;
 extern crate regex;
-extern crate rustc_serialize;
 
 use std::fs;
 use std::io;

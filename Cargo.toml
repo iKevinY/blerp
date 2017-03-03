@@ -19,7 +19,6 @@ doc = false
 path = "src/blerp.rs"
 
 [dependencies]
-ansi_term = "0.7"
-docopt = "0.6"
-regex = "0.1"
-rustc-serialize = "0.3"
+ansi_term = "0.9"
+docopt = "0.7"
+regex = "0.2"
